@@ -16,8 +16,10 @@ Including another URLconf
 """
 # from django.contrib import admin
 from django.urls import path, include  # Добавь include
-
+from apps.endpoints.urls import urlpatterns as endpoints_urlpatterns
 urlpatterns = [
     path('api/', include('api.urls')),  # Подключаем API
 ]
+
+urlpatterns += endpoints_urlpatterns
 

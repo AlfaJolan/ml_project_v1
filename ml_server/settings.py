@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'api',  # Добавляем API
+    'apps.endpoints',
+    'apps.ml'
 ]
 
 MIDDLEWARE = [
