@@ -2,6 +2,7 @@ import joblib
 import os
 import pandas as pd
 import numpy as np
+from sklearn.preprocessing import StandardScaler
 from tensorflow.keras.models import load_model  # Загружаем Keras-модель
 
 class KerasModelPredictor:
@@ -11,26 +12,21 @@ class KerasModelPredictor:
 
         # Загружаем подготовленные файлы (кроме encoders)
         #self.values_fill_missing = joblib.load(os.path.join(self.path_to_artifacts, "train_mode.joblib"))
-
+        # Загрузка скалера и количественных признаков
+        self.scaler = joblib.load(os.path.join(self.path_to_artifacts, "scaler.pkl"))
+        self.numeric_features = joblib.load(os.path.join(self.path_to_artifacts, "numeric_features.pkl"))
         # Загружаем Keras модель
-        self.model = load_model(os.path.join(self.path_to_artifacts, "best_modelb.h5"))
+        self.model = load_model(os.path.join(self.path_to_artifacts, "best_modelb2.h5"))
 
         # Определяем порядок столбцов, который ожидает модель
+
         self.expected_columns = [
-            'оценка качества здоровья', 'частота обращений к мед персоналу за год',
-            'возраст', 'Мужчина', 'Женщина',
-            'Обструктивные хронические болезни легких',
-            'Ревматические (аутоимунные) заболевания',
-            'Язвенные болезни желудка и 12 перстной кишки', 'Болезни печени',
-            'Сахарный диабет', 'Злокачественные опухоли', 'Артериальная гипертония',
-            'Инфекционные и паразитарные заболевания', 'Депрессия', 'Наркотическая',
-            'Уборка в комнате', 'Работа во дворе, в палисаднике',
-            'Заготовка воды и дров', 'Стирка белья, шитье', 'Готовка еды',
-            'Уборка дома', 'Поход в продуктовый магазин и аптеку',
-            'Продолжает работать', 'Участвует в общественных работах',
-            'Активно общается с родственниками и соседями',
-            'Чтение газет и журналов, просмотр телевизора',
-            'Другие разные интересы'
+            'health_score', 'med_visits', 'age', 'male', 'female', 'copd',
+            'rheumatic', 'ulcers', 'liver_disease', 'diabetes', 'cancer',
+            'hypertension', 'infectious_dis', 'depression', 'drug_use',
+            'clean_room', 'yard_work', 'water_wood', 'laundry_sew', 'cook',
+            'clean_house', 'shopping', 'still_working', 'community_work',
+            'social_active', 'reading_tv', 'other_hobbies'
         ]
 
     def preprocessing(self, input_data):
@@ -42,6 +38,7 @@ class KerasModelPredictor:
 
         # Убедимся, что колонки идут в правильном порядке
         input_data = input_data[self.expected_columns]
+        #input_data[self.numeric_features] = self.scaler.transform(input_data[self.numeric_features])
 
         return input_data
 
