@@ -1,9 +1,9 @@
 from django.test import TestCase
 
-from apps.ml.income_classifier.random_forest import RandomForestClassifier
+from apps.ml.heart_disease_probability.random_forest import RandomForestClassifier
 import inspect
 from apps.ml.registry import MLRegistry
-from apps.ml.income_classifier.extra_trees import ExtraTreesClassifier
+from apps.ml.heart_disease_probability.extra_trees import ExtraTreesClassifier
 
 class MLTests(TestCase):
     def test_rf_algorithm(self):
@@ -55,7 +55,7 @@ class MLTests(TestCase):
     def test_registry(self):
         registry = MLRegistry()
         self.assertEqual(len(registry.endpoints), 0)
-        endpoint_name = "income_classifier"
+        endpoint_name = "heart_disease_probability"
         algorithm_object = RandomForestClassifier()
         algorithm_name = "random forest"
         algorithm_status = "production"

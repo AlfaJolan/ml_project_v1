@@ -21,7 +21,7 @@ class EndpointTests(TestCase):
             "hours-per-week": 68,
             "native-country": "United-States"
         }
-        classifier_url = "/api/v1/income_classifier/predict"
+        classifier_url = "/api/v1/heart_disease_probability/predict"
         response = client.post(classifier_url, input_data, format='json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["label"], "<=50K")

@@ -11,7 +11,6 @@ class KerasModelPredictor:
         self.path_to_artifacts = r"C:\Users\Nurkhan\diploma model"
 
         # Загружаем подготовленные файлы (кроме encoders)
-        #self.values_fill_missing = joblib.load(os.path.join(self.path_to_artifacts, "train_mode.joblib"))
         # Загрузка скалера и количественных признаков
         self.scaler = joblib.load(os.path.join(self.path_to_artifacts, "scaler.pkl"))
         self.numeric_features = joblib.load(os.path.join(self.path_to_artifacts, "numeric_features.pkl"))
@@ -33,12 +32,9 @@ class KerasModelPredictor:
         """Предобработка входных данных"""
         input_data = pd.DataFrame(input_data, index=[0])
 
-        # Заполняем пропущенные значения
-        #input_data.fillna(self.values_fill_missing, inplace=True)
-
         # Убедимся, что колонки идут в правильном порядке
         input_data = input_data[self.expected_columns]
-        #input_data[self.numeric_features] = self.scaler.transform(input_data[self.numeric_features])
+        input_data[self.numeric_features] = self.scaler.transform(input_data[self.numeric_features])
 
         return input_data
 
