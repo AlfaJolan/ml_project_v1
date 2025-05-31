@@ -7,14 +7,13 @@ from tensorflow.keras.models import load_model  # Загружаем Keras-мо�
 
 class KerasModelPredictor:
     def __init__(self):
-        # Путь к артефактам модели
-        self.path_to_artifacts = r"C:\Users\Nurkhan\diploma model"
-
-        # Загружаем подготовленные файлы (кроме encoders)
-        # Загрузка скалера и количественных признаков
+        current_dir = os.path.dirname(__file__)
+        self.path_to_artifacts = os.path.abspath(
+            os.path.join(current_dir, "..", "..", "modelsBox", "oldPeople")
+        )
+        # Загружаем подготовленные файлы
         self.scaler = joblib.load(os.path.join(self.path_to_artifacts, "scaler.pkl"))
         self.numeric_features = joblib.load(os.path.join(self.path_to_artifacts, "numeric_features.pkl"))
-        # Загружаем Keras модель
         self.model = load_model(os.path.join(self.path_to_artifacts, "best_modelb2.h5"))
 
         # Определяем порядок столбцов, который ожидает модель

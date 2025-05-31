@@ -2,7 +2,7 @@ import os
 from django.core.wsgi import get_wsgi_application
 
 from apps.endpoints.models import MLAlgorithm
-from apps.ml.heart_disease_probability.KerasModelPredictor import KerasModelPredictor
+from apps.ml.heart_disease_probability.oldPeoplePredictor import KerasModelPredictor
 from apps.ml.heart_disease_probability.neurostimulatorRiskPredictor import NeurostimulatorRiskPredictor
 from apps.ml.heart_disease_probability.young_people_predictor import YoungPeoplePredictor
 

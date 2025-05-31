@@ -1,0 +1,20 @@
+{
+  "limits": {
+    "coffee": {"default": 4, "under_18": 1, "over_60": 3},
+    "energy": {"default": 1, "under_18": 0, "over_60": 0},
+    "alcohol": {"default": 20, "under_18": 0, "over_60": 10}
+  },
+  "weekly_limits": {
+    "coffee": 28,
+    "energy": 3,
+    "alcohol": 140
+  },
+  "penalties": {
+    "exceed_daily": 2,
+    "exceed_weekly": 5,
+    "consecutive_bonus": 3,
+    "age_risk": {"50": 20, "40": 10},
+    "bmi_risk": {"30": 20, "25": 10},
+    "heart_disease": 30
+  }
+}

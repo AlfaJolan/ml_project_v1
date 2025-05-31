@@ -7,14 +7,13 @@ from tensorflow.keras.models import load_model  # Загружаем Keras-мо�
 
 class YoungPeoplePredictor:
     def __init__(self):
-        # Путь к артефактам модели
-        self.path_to_artifacts = r"C:\Users\Nurkhan\diploma model"
+        current_dir = os.path.dirname(os.path.abspath(__file__))
 
-        # Загружаем подготовленные файлы (кроме encoders)
-        # Загрузка скалера и количественных признаков
-        #self.scaler = joblib.load(os.path.join(self.path_to_artifacts, "scaler.pkl"))
-        self.numeric_features = joblib.load(os.path.join(self.path_to_artifacts, "numeric_features.pkl"))
-        # Загружаем Keras модель
+        # Путь до папки с артефактами
+        self.path_to_artifacts = os.path.join(current_dir, "..", "..", "modelsBox", "youngPeople")
+        self.path_to_artifacts = os.path.abspath(self.path_to_artifacts)
+
+        # Загружаем признаки и модель
         self.model = joblib.load(os.path.join(self.path_to_artifacts, "heart_disease_model.pkl"))
 
         # Определяем порядок столбцов, который ожидает модель

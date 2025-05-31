@@ -1,11 +1,14 @@
 import os
 import pandas as pd
-from apps.ml.heart_disease_probability.neuroModel import NeurostimulatorRiskModel
+from apps.ml.modelsBox.neuroStimulators.neuroModel import NeurostimulatorRiskModel
 
 
 class NeurostimulatorRiskPredictor:
     def __init__(self):
-        config_path = os.path.join(r"C:\Users\Nurkhan\diploma model", "config.json")
+        current_dir = os.path.dirname(__file__)
+        config_path = os.path.join(current_dir, "..", "modelsBox", "neuroStimulators", "config.json")
+        config_path = os.path.abspath(config_path)
+
         self.model = NeurostimulatorRiskModel(config_path)
 
     def preprocessing(self, input_data):
