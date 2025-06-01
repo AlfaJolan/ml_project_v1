@@ -9,8 +9,9 @@ class KerasModelPredictor:
     def __init__(self):
         current_dir = os.path.dirname(__file__)
         self.path_to_artifacts = os.path.abspath(
-            os.path.join(current_dir, "..", "..", "modelsBox", "oldPeople")
+            os.path.join(current_dir, "..", "modelsBox", "oldPeople")
         )
+
         # Загружаем подготовленные файлы
         self.scaler = joblib.load(os.path.join(self.path_to_artifacts, "scaler.pkl"))
         self.numeric_features = joblib.load(os.path.join(self.path_to_artifacts, "numeric_features.pkl"))

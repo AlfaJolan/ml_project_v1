@@ -10,7 +10,7 @@ class YoungPeoplePredictor:
         current_dir = os.path.dirname(os.path.abspath(__file__))
 
         # Путь до папки с артефактами
-        self.path_to_artifacts = os.path.join(current_dir, "..", "..", "modelsBox", "youngPeople")
+        self.path_to_artifacts = os.path.join(current_dir, "..", "modelsBox", "youngPeople")
         self.path_to_artifacts = os.path.abspath(self.path_to_artifacts)
 
         # Загружаем признаки и модель
