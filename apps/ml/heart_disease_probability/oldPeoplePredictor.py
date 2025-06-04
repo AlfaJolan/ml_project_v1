@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 from tensorflow.keras.models import load_model  # Загружаем Keras-модель
 
-class KerasModelPredictor:
+class oldPeoplePredictor:
     def __init__(self):
         current_dir = os.path.dirname(__file__)
         self.path_to_artifacts = os.path.abspath(

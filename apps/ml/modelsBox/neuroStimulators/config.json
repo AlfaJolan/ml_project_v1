@@ -15,6 +15,7 @@
     "consecutive_bonus": 3,
     "age_risk": {"50": 20, "40": 10},
     "bmi_risk": {"30": 20, "25": 10},
-    "heart_disease": 30
+    "risk_level_medium": 10,
+    "risk_level_high": 25
   }
 }

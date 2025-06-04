@@ -15,18 +15,18 @@ class NeurostimulatorRiskPredictor:
         try:
             age = input_data["age"]
             bmi = input_data["bmi"]
-            has_heart_disease = input_data["has_heart_disease"]
+            risk_level = input_data["risk_level"].lower()  # строка "low", "medium", "high"
             week_data = input_data["week_data"]
 
             df = pd.DataFrame(week_data)
-            return age, bmi, has_heart_disease, df
+            return age, bmi, risk_level, df
         except Exception as e:
             raise ValueError(f"Ошибка препроцессинга: {str(e)}")
 
     def compute_prediction(self, input_data):
         try:
-            age, bmi, has_heart_disease, df = self.preprocessing(input_data)
-            result = self.model.calculate_risk(age, bmi, has_heart_disease, df)
+            age, bmi, risk_level, df = self.preprocessing(input_data)
+            result = self.model.calculate_risk(age, bmi, risk_level, df)
             result["status"] = "OK"
             return result
         except Exception as e:

@@ -4,12 +4,17 @@ import json
 
 class NeurostimulatorRiskModel:
     def __init__(self, config_path):
-        # Загружаем конфиг
         with open(config_path, 'r') as f:
             self.config = json.load(f)
 
+        # Сопоставление строковых уровней риска с числовыми штрафами
+        self.risk_level_penalties = {
+            "low": 0,
+            "medium": self.config['penalties'].get('risk_level_medium', 10),
+            "high": self.config['penalties'].get('risk_level_high', 25)
+        }
+
     def get_limit(self, substance, age):
-        """Получить лимит в зависимости от возраста"""
         limits = self.config['limits'][substance]
         if age < 18 and 'under_18' in limits:
             return limits['under_18']
@@ -18,20 +23,18 @@ class NeurostimulatorRiskModel:
         else:
             return limits['default']
 
-    def calculate_risk(self, age, bmi, has_heart_disease, data: pd.DataFrame):
+    def calculate_risk(self, age, bmi, risk_level_str, data: pd.DataFrame):
         risk_score = 0
         explanations = []
         alerts = []
+        recommendations = []
 
-        # Флаги превышений
         exceed_daily = {'coffee': [], 'energy': [], 'alcohol': []}
 
-        # Анализ по каждому веществу
         for substance in ['coffee', 'energy', 'alcohol']:
             daily_limit = self.get_limit(substance, age)
             weekly_limit = self.config['weekly_limits'][substance]
 
-            # Проверка по дням
             for idx, value in enumerate(data[substance]):
                 if value > daily_limit:
                     risk_score += self.config['penalties']['exceed_daily']
@@ -41,7 +44,6 @@ class NeurostimulatorRiskModel:
                 else:
                     exceed_daily[substance].append(0)
 
-            # Сумма за неделю
             total_week = data[substance].sum()
             if total_week > weekly_limit:
                 risk_score += self.config['penalties']['exceed_weekly']
@@ -50,7 +52,6 @@ class NeurostimulatorRiskModel:
             else:
                 explanations.append(f"{substance.capitalize()} weekly total {total_week} within limit {weekly_limit}")
 
-            # Поиск серий превышений
             series = []
             count = 0
             for flag in exceed_daily[substance]:
@@ -70,45 +71,55 @@ class NeurostimulatorRiskModel:
                 alerts.append(
                     f"{substance.capitalize()}: {len(series)} consecutive exceed series, max {max(series)} days")
 
-        # Возрастные риски
+            # Точечные советы по веществу
+            if any(exceed_daily[substance]):
+                if substance == 'coffee':
+                    recommendations.append("Reduce coffee intake.")
+                elif substance == 'energy':
+                    recommendations.append("Limit energy drink consumption.")
+                elif substance == 'alcohol':
+                    recommendations.append("Cut down on alcohol.")
+
         for age_threshold, penalty in self.config['penalties']['age_risk'].items():
             if age >= int(age_threshold):
                 risk_score += penalty
                 explanations.append(f"Age {age} >= {age_threshold}: +{penalty}")
-                break  # Применяем только один порог
+                break
 
-        # BMI риск
         for bmi_threshold, penalty in self.config['penalties']['bmi_risk'].items():
             if bmi >= int(bmi_threshold):
                 risk_score += penalty
                 explanations.append(f"BMI {bmi} >= {bmi_threshold}: +{penalty}")
                 break
 
-        # Риск болезни сердца
-        if has_heart_disease:
-            risk_score += self.config['penalties']['heart_disease']
-            explanations.append(f"Has heart disease: +{self.config['penalties']['heart_disease']}")
+        penalty_for_level = self.risk_level_penalties.get(risk_level_str, 0)
+        risk_score += penalty_for_level
+        explanations.append(f"Risk level '{risk_level_str}': +{penalty_for_level}")
 
-        # Ограничим максимум 100
         risk_score = min(risk_score, 100)
 
-        # Вывод рекомендаций
         if risk_score < 30:
-            recommendation = "Low risk. Maintain healthy lifestyle."
+            base_recommendation = "Low risk. Maintain a healthy lifestyle."
         elif risk_score < 70:
-            recommendation = "Moderate risk. Reduce caffeine/energy drink intake."
+            base_recommendation = "Moderate risk."
         else:
-            recommendation = "High risk! Consult a doctor for advice."
+            base_recommendation = "High risk! Consult a healthcare professional."
+
+        if recommendations:
+            full_recommendation = base_recommendation + " Recommendations: " + " ".join(recommendations)
+        else:
+            full_recommendation = base_recommendation
+
+        alerts_text = "; ".join(alerts) if alerts else "No significant alerts."
 
         return {
-            'risk_score': risk_score,
-            'recommendation': recommendation,
+            'risk_score': round(risk_score, 2),
+            'recommendation': full_recommendation,
             'explanations': explanations,
-            'alerts': alerts
+            'alerts': alerts_text
         }
 
     def save_report(self, result_dict, filepath):
-        """Сохранить результат в JSON"""
         with open(filepath, 'w') as f:
             json.dump(result_dict, f, indent=4)
         print(f"Saved report to {filepath}")
